@@ -32,7 +32,7 @@ else
 
 	LINKER_FLAGS = -lsdl2
 
-	OBJ_NAME = build\chip8
+	OBJ_NAME = build/chip8
 endif
 
 #This is the target that compiles our executable
