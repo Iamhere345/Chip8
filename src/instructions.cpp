@@ -48,7 +48,7 @@ void Chip8::LD(uint16_t opcode) {
     //printf("0x%X implemented\n", opcode);
 
     uint16_t index = (opcode & 0x0F00) >> 8;
-    V[index] = (opcode & 0x00FF) << 8;
+    V[index] = (opcode & 0x00FF);
 
     uint8_t vx = (opcode & 0x00FF);
 
@@ -61,13 +61,13 @@ void Chip8::LD(uint16_t opcode) {
 
 // 0x7XNN adds NN to Vx
 void Chip8::ADD(uint16_t opcode) {
-    //printf("0x%X implemented\n", opcode);
+    //printf("0x%X ADD\n", opcode);
 
-    V[opcode & 0x0F00] += (opcode & 0x00FF) << 8;
+    V[(opcode & 0x0F00) >> 8] += (opcode & 0x00FF);
 
     pc += 2;
 
-    printf("add %d to V[%d]\n", (opcode & 0x00FF) << 8, opcode & 0x0F00);
+    printf("add 0x%X to V[%d]\n", (opcode & 0x00FF), (opcode & 0x0F00) >> 8);
 
 }	
 
@@ -135,7 +135,34 @@ void Chip8::RND(uint16_t opcode) {
 void Chip8::DRW(uint16_t opcode) {
     printf("0x%X DRAW\n", opcode);
 
+    uint8_t x = V[(opcode & 0x0F00) >> 8] % 64;
+    uint8_t y = V[(opcode & 0x00F0) >> 4] % 32;
+
+    V[0xF] = 0;
+
+    uint8_t rows = opcode & 0x000F;
+    
+    printf("rows: %d", rows);
+
+    for (int yline = 0; yline < rows; yline++) {
+
+        uint8_t pixel = memory[I + yline];
+
+        for (int xyline = 0; xyline < 8; xyline++) {
+
+            // TODO
+
+            if (pixel != 0 && gfx[x + 64 * y] != 0) {
+                gfx[x + 64 * y] = 0;
+                V[0xF] = 1;
+            }
+
+        }
+
+    }
+
     pc += 2;
+    
 }
 
 void Chip8::SKP(uint16_t opcode) {

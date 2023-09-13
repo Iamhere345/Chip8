@@ -14,8 +14,6 @@ const int INTERNAL_SCREEN_HEIGHT = 32;
 
 const int UPSCALE_FACTOR = SCREEN_WIDTH / INTERNAL_SCREEN_WIDTH;      // 16x internal
 
-// TODO use CMake or something
-
 int main(void) {
 
     // initialise SDL2
@@ -44,8 +42,7 @@ int main(void) {
     // create chip8 instance
     Chip8 chip8;
 
-
-    bool did_load = chip8.load_game("res/ibm.ch8");
+    bool did_load = chip8.load_game("res/IBM.ch8");
 
     if (!did_load) {
         app_error("Unable to load rom", "N/A");
@@ -115,6 +112,7 @@ int main(void) {
 
     
     // quit
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     
     SDL_Quit();

@@ -97,6 +97,7 @@ void Chip8::cycle() {
     }
 
     // tick timers
+    // TODO timers need to be ticked at 60Hz
     if (delay_timer > 0) 
         delay_timer--;
 
