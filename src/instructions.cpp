@@ -1,4 +1,5 @@
 #include "chip8.h"
+#include <cstring>
 
 // Clear screen
 void Chip8::CLS(uint16_t opcode) {

@@ -14,7 +14,7 @@ const int INTERNAL_SCREEN_HEIGHT = 32;
 
 const int UPSCALE_FACTOR = SCREEN_WIDTH / INTERNAL_SCREEN_WIDTH;      // 16x internal
 
-int main(void) {
+int main(int argc, char** args) {
 
     // initialise SDL2
     SDL_Window* window = NULL;

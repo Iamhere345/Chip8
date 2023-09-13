@@ -9,14 +9,6 @@ enum Memonics {
     ANNN = 0xA000,
 };
 
-// IDEA:
-/*
-Have a static instruction lookup table linked to a function ptr,
-so all the instruction decoder has to to is check that each hex digit
-is the same as the one in the lookup table (excluding data bits).
-I can probably exclude the data bits by providing a bitmask in the lookup table.
-*/
-
 Chip8::Chip8() {
     
     pc      = 0x200;
@@ -57,7 +49,6 @@ bool Chip8::load_game(char* path) {
         return false;
     }
 
-    // just like K&R
     int c;
     for (int i = 0x200; (c = fgetc(rom)) != EOF && i < 4096; i++) {
         memory[i] = c;
