@@ -73,8 +73,6 @@ int main(int argc, char** args) {
 
             uint8_t pixel = chip8.gfx[i];
 
-            //printf("%d ", i);
-
             int px = i % INTERNAL_SCREEN_WIDTH;
             int py = i / INTERNAL_SCREEN_WIDTH;
 
@@ -86,7 +84,6 @@ int main(int argc, char** args) {
                     break;
                 }
                 case 1: {
-                    //printf("(%d %d) ", screen_pixel.x, screen_pixel.y);
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
                     break;
                 }

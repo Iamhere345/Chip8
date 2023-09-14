@@ -5,10 +5,6 @@
 
 using namespace std;
 
-enum Memonics {
-    ANNN = 0xA000,
-};
-
 Chip8::Chip8() {
     
     pc      = 0x200;
@@ -16,16 +12,10 @@ Chip8::Chip8() {
     I       = 0;
     sp      = 0;
 
-    // clear screen
+    // initialise memory
     memset(gfx, 0, 64 * 32);
-
-    // clear stack
     memset(stack, 0, 16 * sizeof(uint16_t));
-
-    // clear registers
     memset(V, 0, 16);
-
-    // clear memory
     memset(memory, 0, 4096);
 
     // load fontset
@@ -80,8 +70,6 @@ void Chip8::cycle() {
     opcode = memory[pc] << 8 | memory[pc + 1];
 
     // decode and execute instruction
-    // TODO remove and replace with lookup table code
-
     bool opcode_executed = false;
     for (int i = 0; i < 35; i++) {
 

@@ -1,7 +1,7 @@
 #include "chip8.h"
 #include <cstring>
 
-// Clear screen
+// 0x00E0: Clear screen
 void Chip8::CLS(uint16_t opcode) {
     //printf("0x%X implemented\n", opcode);
 
@@ -12,7 +12,7 @@ void Chip8::CLS(uint16_t opcode) {
     printf("[0x%X] clear screen\n", opcode);
 }	
 
-
+// 0x0000: this instruction is depcrecated and should not be called
 void Chip8::SYS(uint16_t opcode) {
     //printf("0x%X use of SYS is deprecated\n", opcode);
 
@@ -119,7 +119,7 @@ void Chip8::SNEY(uint16_t opcode) {
     }
 }
 
-// 0x6XKK sets Vx to u8 kk 
+// 0x6XKK: set Vx to u8 kk 
 void Chip8::LD(uint16_t opcode) {
     //printf("0x%X implemented\n", opcode);
 
@@ -135,7 +135,7 @@ void Chip8::LD(uint16_t opcode) {
     printf("set V[%d] to 0x%X (0x%X)\n", index, vx, opcode);
 }	
 
-// 0x7XNN adds NN to Vx
+// 0x7XNN: add NN to Vx
 void Chip8::ADD(uint16_t opcode) {
     //printf("0x%X ADD\n", opcode);
 
@@ -183,7 +183,7 @@ void Chip8::SHL(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
 }
 
-// ANNN sets index register I to NNN
+// 0xANNN: set index register I to NNN
 void Chip8::ILDADDR(uint16_t opcode) {
     //printf("0x%X implemented\n", opcode);
 
@@ -203,7 +203,7 @@ void Chip8::RND(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
 }
 
-// DXYN: 
+// DXYN: draws a sprite to the screen at positon (Vx, Vy) that is N pixels tall
 void Chip8::DRW(uint16_t opcode) {
     printf("0x%X DRAW\n", opcode);
 
