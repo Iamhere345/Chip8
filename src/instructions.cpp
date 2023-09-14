@@ -22,7 +22,7 @@ void Chip8::SYS(uint16_t opcode) {
 // 0x1NNN: Non-conditional jump
 void Chip8::JMP(uint16_t opcode) {
     //printf("0x%X implemented\n", opcode);
-    printf("jump to 0x%X (pc: 0x%X)\n", opcode & 0x0FFF, pc);
+    //printf("jump to 0x%X (pc: 0x%X)\n", opcode & 0x0FFF, pc);
 
     pc = opcode & 0x0FFF;
 
@@ -143,20 +143,26 @@ void Chip8::DRW(uint16_t opcode) {
 
     uint8_t rows = opcode & 0x000F;
     
-    printf("rows: %d", rows);
+    //printf("rows: %d", rows);
 
     for (int yline = 0; yline < rows; yline++) {
 
         uint8_t pixel = memory[I + yline];
 
-        for (int xyline = 0; xyline < 8; xyline++) {
+        for (int xline = 0; xline < 8; xline++) {
 
-            // TODO
+            // 0x80 = 0b10000000
+            uint8_t xbit = pixel & (0x80 >> xline);
+            uint8_t screen_pixel = x + xline + ((y + yline) * 64);
 
-            if (pixel != 0 && gfx[x + 64 * y] != 0) {
-                gfx[x + 64 * y] = 0;
-                V[0xF] = 1;
-            }
+            if (xbit != 0) {
+
+                // if the pixel will be set to 0 set VF
+                if (gfx[screen_pixel] == 1)
+                    V[0xF] = 1;
+                
+                gfx[x + xline + ((y + yline) * 64)] ^= 1;
+            } 
 
         }
 
