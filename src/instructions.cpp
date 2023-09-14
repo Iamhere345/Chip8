@@ -36,10 +36,12 @@ void Chip8::CALL(uint16_t opcode) {
 
     stack[sp++] = pc;
 
+    /*
     printf("STACK (current pos %d):\n", sp);
 
     for (int i = 0; i < 16; i++)
         printf("%d: 0x%X\n", i, stack[i]);
+    */
 
     pc = opcode & 0x0FFF;
 
@@ -49,14 +51,18 @@ void Chip8::CALL(uint16_t opcode) {
 void Chip8::RET(uint16_t opcode) {
     printf("RET 0x%X\n", stack[sp - 1]);
 
+    /*
     printf("STACK (current pos %d):\n", sp);
 
     for (int i = 0; i < 16; i++)
         printf("%d: 0x%X\n", i, stack[i]);
+    */
 
     pc = stack[--sp];
 
-    printf("PC: 0x%X", pc);
+    printf("PC: 0x%X\n", pc);
+
+    pc += 2;
 
 }
 

@@ -20,7 +20,7 @@ Chip8::Chip8() {
     memset(gfx, 0, 64 * 32);
 
     // clear stack
-    memset(stack, 0, 16);
+    memset(stack, 0, 16 * sizeof(uint16_t));
 
     // clear registers
     memset(V, 0, 16);
@@ -51,7 +51,7 @@ bool Chip8::load_game(char* path) {
         memory[i] = c;
     }
 
-    printf("%d bytes loaded", i - 0x200);
+    printf("**** %d bytes loaded ****\n", i - 0x200);
 
     return true;
 
@@ -87,10 +87,6 @@ void Chip8::cycle() {
 
         LOOKUP_INFO info = LOOKUP_TABLE[i];
 
-        /*
-        !!! BIG PROBLEM !!!
-        
-        */
         if ((opcode & info.mask) == info.opcode) {
 
             //printf("0x%X & 0x%X == 0x%X\n", opcode, info.mask, info.opcode);
