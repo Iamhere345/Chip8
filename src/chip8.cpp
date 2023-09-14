@@ -19,9 +19,6 @@ Chip8::Chip8() {
     // clear screen
     memset(gfx, 0, 64 * 32);
 
-    for (int i = 10; i < 40; i++)
-        gfx[i] = 1;
-
     // clear stack
     memset(stack, 0, 16);
 
@@ -49,10 +46,29 @@ bool Chip8::load_game(char* path) {
         return false;
     }
 
-    int c;
-    for (int i = 0x200; (c = fgetc(rom)) != EOF && i < 4096; i++) {
+    int c, i;
+    for (i = 0x200; (c = fgetc(rom)) != EOF && i < 4096; i++) {
         memory[i] = c;
     }
+
+    printf("%d bytes loaded", i - 0x200);
+
+    return true;
+
+}
+
+bool Chip8::dump_memory(char* path) {
+
+    FILE* rom = fopen(path, "w");
+
+    if (rom == NULL) {
+        return false;
+    }
+
+    for (int i = 0; i < 4096; i++)
+        fputc(memory[i], rom);
+
+    fclose(rom);
 
     return true;
 
@@ -71,6 +87,10 @@ void Chip8::cycle() {
 
         LOOKUP_INFO info = LOOKUP_TABLE[i];
 
+        /*
+        !!! BIG PROBLEM !!!
+        
+        */
         if ((opcode & info.mask) == info.opcode) {
 
             //printf("0x%X & 0x%X == 0x%X\n", opcode, info.mask, info.opcode);

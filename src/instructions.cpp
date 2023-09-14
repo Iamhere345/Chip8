@@ -9,14 +9,16 @@ void Chip8::CLS(uint16_t opcode) {
 
     pc += 2;
 
-    printf("clear screen\n", opcode);
+    printf("[0x%X] clear screen\n", opcode);
 }	
 
-void Chip8::RET(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
-}	
+
 void Chip8::SYS(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+    //printf("0x%X use of SYS is deprecated\n", opcode);
+
+    dump_memory("build/memory.bin");
+
+    //pc += 2;
 }	
 
 // 0x1NNN: Non-conditional jump
@@ -28,20 +30,87 @@ void Chip8::JMP(uint16_t opcode) {
 
 }
 
+// 0x2NNN: add pc to the stack and jump to NNN
 void Chip8::CALL(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
-}	
+    printf("[0x%X] CALL 0x%X from 0x%X\n", opcode, opcode & 0x0FFF, pc);
 
-void Chip8::SE(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
-}	
+    stack[sp++] = pc;
 
-void Chip8::SNE(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+    printf("STACK (current pos %d):\n", sp);
+
+    for (int i = 0; i < 16; i++)
+        printf("%d: 0x%X\n", i, stack[i]);
+
+    pc = opcode & 0x0FFF;
+
 }
 
+// 00EE: set pc to stack[sp] and pop the stack
+void Chip8::RET(uint16_t opcode) {
+    printf("RET 0x%X\n", stack[sp - 1]);
+
+    printf("STACK (current pos %d):\n", sp);
+
+    for (int i = 0; i < 16; i++)
+        printf("%d: 0x%X\n", i, stack[i]);
+
+    pc = stack[--sp];
+
+    printf("PC: 0x%X", pc);
+
+}
+
+// 0x3XNN: skip one instruction if Vx == NN
+void Chip8::SE(uint16_t opcode) {
+    printf("[0x%X] SE %d == %d\n", opcode, V[(opcode & 0x0F00) >> 8], opcode & 0x00FF);
+
+    if (V[(opcode & 0x0F00) >> 8] == (opcode & 0x00FF)) {
+        //printf("SE JMP\n");
+        pc += 4;
+    } else {
+        //printf("SE NO JMP\n");
+        pc += 2;
+    }
+
+}	
+
+// 0x4XNN: skip one instruction if Vx != NN
+void Chip8::SNE(uint16_t opcode) {
+    printf("[0x%X] SNE %d != %d\n", opcode, V[(opcode & 0x0F00) >> 8], opcode & 0x00FF);
+
+    if (V[(opcode & 0x0F00) >> 8] != (opcode & 0x00FF)) {
+        //printf("SE JMP\n");
+        pc += 4;
+    } else {
+        //printf("SE NO JMP\n");
+        pc += 2;
+    }
+}
+
+// 0x5XY0: skip one instruction if Vx == Vy
 void Chip8::SEY(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+    printf("[0x%X] SEY %d == %d\n", opcode, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4]);
+
+    if (V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4]) {
+        //printf("SE JMP\n");
+        pc += 4;
+    } else {
+        //printf("SE NO JMP\n");
+        pc += 2;
+    }
+}
+
+// 0x9XY0: skip one instruction if Vx != Vy
+void Chip8::SNEY(uint16_t opcode) {
+    printf("[0x%X] SNEY %d != %d\n", opcode, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4]);
+
+    if (V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4]) {
+        //printf("SE JMP\n");
+        pc += 4;
+    } else {
+        //printf("SE NO JMP\n");
+        pc += 2;
+    }
 }
 
 // 0x6XKK sets Vx to u8 kk 
@@ -105,10 +174,6 @@ void Chip8::SUBN(uint16_t opcode) {
 } 
 
 void Chip8::SHL(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
-}
-
-void Chip8::SNEY(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
 }
 

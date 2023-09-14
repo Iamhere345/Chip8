@@ -14,7 +14,7 @@ ifeq ($(OS),Windows_NT)
 	#COMPILER_FLAGS specifies the additional compilation options we're using
 	# -w suppresses all warnings
 	# -Wl,-subsystem,windows gets rid of the console window
-	COMPILER_FLAGS = -w #-Wl,-subsystem,windows
+	COMPILER_FLAGS = -Wall #-Wl,-subsystem,windows
 
 	#LINKER_FLAGS specifies the libraries we're linking against
 	LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2
@@ -28,7 +28,7 @@ else
 
 	INCLUDE_PATHS = -Iinclude
 
-	COMPILER_FLAGS = -w
+	COMPILER_FLAGS = -Wall
 
 	LINKER_FLAGS = -lsdl2
 

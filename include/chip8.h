@@ -9,6 +9,7 @@ class Chip8 {
 	
 		Chip8();
 		bool load_game(char*);
+		bool dump_memory(char*);
 		void cycle();
 
 		uint16_t opcode;
@@ -23,7 +24,7 @@ class Chip8 {
 		uint8_t delay_timer;
 		uint8_t sound_timer;
 
-		uint8_t stack[16];
+		uint16_t stack[16];
 		uint8_t sp;
 
 		uint8_t key[16];
@@ -65,8 +66,9 @@ private:
 			0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 		};
 
+		// opcodes that don't have any data bits should have the mask as 0xFFFF
 		const LOOKUP_INFO LOOKUP_TABLE[35] = {
-			{ 0x00E0, 0x00F0, &Chip8::CLS }, { 0x00EE, 0x00FF, &Chip8::RET }, { 0x0000, 0xF000, &Chip8::SYS }, { 0x1000, 0xF000, &Chip8::JMP }, { 0x2000, 0xF000, &Chip8::CALL },
+			{ 0x00E0, 0xFFFF, &Chip8::CLS }, { 0x00EE, 0xFFFF, &Chip8::RET }, { 0x0000, 0xFFFF, &Chip8::SYS }, { 0x1000, 0xF000, &Chip8::JMP }, { 0x2000, 0xF000, &Chip8::CALL },
 			{ 0x3000, 0xF000, &Chip8::SE  }, { 0x4000, 0xF000, &Chip8::SNE }, { 0x5000, 0xF00F, &Chip8::SEY }, { 0x6000, 0xF000, &Chip8::LD  }, { 0x7000, 0xF000, &Chip8::ADD  },
 			{ 0x8000, 0xF00F, &Chip8::LDY }, { 0x8001, 0xF00F, &Chip8::OR  }, { 0x8002, 0xF00F, &Chip8::ADD }, { 0x8003, 0xF00F, &Chip8::XOR }, { 0x8004, 0xF00F, &Chip8::ADDY },
 			{ 0x8005, 0xF00F, &Chip8::SUB }, { 0x8006, 0xF00F, &Chip8::SHR }, { 0x8007, 0xF00F, &Chip8::SUBN}, { 0x800E, 0xF00F, &Chip8::SHL }, { 0x9000, 0xF00F, &Chip8::SNEY },
