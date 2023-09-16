@@ -14,11 +14,11 @@ void Chip8::CLS(uint16_t opcode) {
 
 // 0x0000: this instruction is depcrecated and should not be called
 void Chip8::SYS(uint16_t opcode) {
-    //printf("0x%X use of SYS is deprecated\n", opcode);
+    printf("0x%X use of SYS is deprecated\n", opcode);
 
     dump_memory("build/memory.bin");
 
-    //pc += 2;
+    halt = true;
 }	
 
 // 0x1NNN: Non-conditional jump
