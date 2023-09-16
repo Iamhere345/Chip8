@@ -26,6 +26,8 @@ Chip8::Chip8() {
     delay_timer = 0;
     sound_timer = 0;
 
+    halt = false;
+
 }
 
 bool Chip8::load_game(char* path) {
@@ -66,6 +68,10 @@ bool Chip8::dump_memory(char* path) {
 
 void Chip8::cycle() {
 
+    if (halt) {
+        return;
+    }
+
     // fetch instruction
     opcode = memory[pc] << 8 | memory[pc + 1];
 
@@ -76,6 +82,8 @@ void Chip8::cycle() {
         LOOKUP_INFO info = LOOKUP_TABLE[i];
 
         if ((opcode & info.mask) == info.opcode) {
+
+            printf("[0x%X] ", opcode);
 
             //printf("0x%X & 0x%X == 0x%X\n", opcode, info.mask, info.opcode);
 

@@ -28,6 +28,9 @@ class Chip8 {
 		uint8_t sp;
 
 		uint8_t key[16];
+
+		bool halt;
+
 private:
 		void CLS(uint16_t);		void RET(uint16_t);		void SYS(uint16_t); 	void JMP(uint16_t);
 		void CALL(uint16_t);	void SE(uint16_t);		void SNE(uint16_t);		void SEY(uint16_t);
@@ -70,7 +73,7 @@ private:
 		const LOOKUP_INFO LOOKUP_TABLE[35] = {
 			{ 0x00E0, 0xFFFF, &Chip8::CLS }, { 0x00EE, 0xFFFF, &Chip8::RET }, { 0x0000, 0xFFFF, &Chip8::SYS }, { 0x1000, 0xF000, &Chip8::JMP }, { 0x2000, 0xF000, &Chip8::CALL },
 			{ 0x3000, 0xF000, &Chip8::SE  }, { 0x4000, 0xF000, &Chip8::SNE }, { 0x5000, 0xF00F, &Chip8::SEY }, { 0x6000, 0xF000, &Chip8::LD  }, { 0x7000, 0xF000, &Chip8::ADD  },
-			{ 0x8000, 0xF00F, &Chip8::LDY }, { 0x8001, 0xF00F, &Chip8::OR  }, { 0x8002, 0xF00F, &Chip8::ADD }, { 0x8003, 0xF00F, &Chip8::XOR }, { 0x8004, 0xF00F, &Chip8::ADDY },
+			{ 0x8000, 0xF00F, &Chip8::LDY }, { 0x8001, 0xF00F, &Chip8::OR  }, { 0x8002, 0xF00F, &Chip8::AND }, { 0x8003, 0xF00F, &Chip8::XOR }, { 0x8004, 0xF00F, &Chip8::ADDY },
 			{ 0x8005, 0xF00F, &Chip8::SUB }, { 0x8006, 0xF00F, &Chip8::SHR }, { 0x8007, 0xF00F, &Chip8::SUBN}, { 0x800E, 0xF00F, &Chip8::SHL }, { 0x9000, 0xF00F, &Chip8::SNEY },
 
 			{ 0xA000, 0xF000, &Chip8::ILDADDR }, { 0xB000, 0xF000, &Chip8::JMPADDR }, { 0xC000, 0xF000, &Chip8::RND }, { 0xD000, 0xF000, &Chip8::DRW }, { 0xE00E, 0xF00F, &Chip8::SKP },

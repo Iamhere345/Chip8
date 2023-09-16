@@ -135,6 +135,18 @@ void Chip8::LD(uint16_t opcode) {
     printf("set V[%d] to 0x%X (0x%X)\n", index, vx, opcode);
 }	
 
+// 0x8XY0: set Vx to Vy
+void Chip8::LDY(uint16_t opcode) {
+    //printf("0x%X unimplemented\n", opcode);
+
+    printf("Set V[%d] to V[%d]\n", (opcode & 0x0F00) >> 8, (opcode & 0x00F0) >> 4);
+
+    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4];
+
+    pc += 2;
+
+}
+
 // 0x7XNN: add NN to Vx
 void Chip8::ADD(uint16_t opcode) {
     //printf("0x%X ADD\n", opcode);
@@ -147,40 +159,85 @@ void Chip8::ADD(uint16_t opcode) {
 
 }	
 
-void Chip8::LDY(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
-}		
-
+// 0x8XY1: set Vx to Vx | Vy
 void Chip8::OR(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+
+    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] | V[(opcode & 0x00F0) >> 4];
+
+    pc += 2;
+
 }
 
+// 0x8XY2: set Vx to Vx & Vy
 void Chip8::AND(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+
+    printf("V[%d] = 0x%X & 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] & V[(opcode & 0x00F0) >> 4]);
+
+    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] & V[(opcode & 0x00F0) >> 4];
+
+    pc += 2;
+
 }
 
+// 0x8XY3: set Vx to Vx ^ Vy
 void Chip8::XOR(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+
+    printf("V[%d] = 0x%X ^ 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] ^ V[(opcode & 0x00F0) >> 4]);
+
+    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] ^ V[(opcode & 0x00F0) >> 4];
+
+    pc += 2;
 }	
 
+// 0x8XY4: set Vx to Vx + Vy
 void Chip8::ADDY(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+    printf("V[%d] = 0x%X + 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] + V[(opcode & 0x00F0) >> 4]);
+
+    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] + V[(opcode & 0x00F0) >> 4];
+
+    pc += 2;
 }
 
+// 0x8XY5: set Vx to Vx - Vy
 void Chip8::SUB(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+    printf("V[%d] = 0x%X - 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] - V[(opcode & 0x00F0) >> 4]);
+
+    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] - V[(opcode & 0x00F0) >> 4];
+
+    pc += 2;
 }
 
-void Chip8::SHR(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
-}	
-
+// 0x8XY7: set Vx to Vy - Vx
 void Chip8::SUBN(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+    printf("V[%d] = 0x%X - 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] - V[(opcode & 0x00F0) >> 4]);
+
+    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] - V[(opcode & 0x0F00) >> 8];
+
+    pc += 2;
 } 
 
+// ? SHL and SHR will have to be modified for an SCHIP or CHIP-48 Implementation
+// 0x8XYE: set Vx to Vy (optional) and shift Vx to the left
 void Chip8::SHL(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
+    return;
+
+    // TODO
+    //if (V[(opcode & 0x0F00) >> 8] & 0x)
+
+    V[(opcode & 0x0F00) >> 8] = (V[(opcode * 0x00F0) >> 4]) << 1;
+
+
+
+}
+
+// 0x8XYE: set Vx to Vy (optional) and shift Vx to the left
+void Chip8::SHR(uint16_t opcode) {
+    printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 // 0xANNN: set index register I to NNN
@@ -197,10 +254,14 @@ void Chip8::ILDADDR(uint16_t opcode) {
 
 void Chip8::JMPADDR(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::RND(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 // DXYN: draws a sprite to the screen at positon (Vx, Vy) that is N pixels tall
@@ -245,45 +306,67 @@ void Chip8::DRW(uint16_t opcode) {
 
 void Chip8::SKP(uint16_t opcode) {
     printf("0x%X unimplemented AA\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::SKNP(uint16_t opcode) {
     printf("0x%X unimplemented AA\n", opcode);
+
+    halt = true;
 } 
 
 void Chip8::XLDDT(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::XLDK(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::DTLDX(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::STLDX(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::IADDX(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::FLDX(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::BLDX(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::DILDX(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
 void Chip8::XLDDI(uint16_t opcode) {
     printf("0x%X unimplemented\n", opcode);
+
+    halt = true;
 }
 
