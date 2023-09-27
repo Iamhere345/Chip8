@@ -1,10 +1,9 @@
 #include "chip8.h"
 #include <cstring>
+#include <stdlib.h>
 
 // 0x00E0: Clear screen
 void Chip8::CLS(uint16_t opcode) {
-    //printf("0x%X implemented\n", opcode);
-
     memset(gfx, 0, 64 * 32);
 
     pc += 2;
@@ -23,7 +22,6 @@ void Chip8::SYS(uint16_t opcode) {
 
 // 0x1NNN: Non-conditional jump
 void Chip8::JMP(uint16_t opcode) {
-    //printf("0x%X implemented\n", opcode);
     printf("jump to 0x%X (pc: 0x%X)\n", opcode & 0x0FFF, pc);
 
     pc = opcode & 0x0FFF;
@@ -253,7 +251,7 @@ void Chip8::SHR(uint16_t opcode) {
 }
 
 // 0xANNN: set index register I to NNN
-void Chip8::ILDADDR(uint16_t opcode) {
+void Chip8::LDI(uint16_t opcode) {
     //printf("0x%X implemented\n", opcode);
 
     I = opcode & 0x0FFF;
@@ -264,16 +262,25 @@ void Chip8::ILDADDR(uint16_t opcode) {
 
 }
 
-void Chip8::JMPADDR(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+// ? this will need to be changed for an SCHIP or CHIP-48 implementation
+// 0xBNNN: set pc to NNN + V0
+void Chip8::RJMP(uint16_t opcode) {
+    printf("relative jump to 0x%X (0x%X + 0x%X)", (opcode & 0x0FFF) + V[0], opcode & 0x0FFF, V[0]);
 
-    halt = true;
+	pc = (opcode & 0x0FFF) + V[0];
 }
 
+// 0xCXNN: generates a random number, ands it with NN and stores the result in Vx
 void Chip8::RND(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+    
+	int rnd = rand();
 
-    halt = true;
+	printf("rnd num is %d (0x%X) masked: 0x%X\n", rnd, rnd, rnd & (opcode & 0x0FF));
+
+	V[(opcode & 0x0F00) >> 8] = rnd & (opcode & 0x0FF);
+
+	pc += 2;
+
 }
 
 // DXYN: draws a sprite to the screen at positon (Vx, Vy) that is N pixels tall

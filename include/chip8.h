@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+#include <SDL2/SDL_scancode.h>
 
 #pragma once
 
@@ -11,6 +12,7 @@ class Chip8 {
 		bool load_game(char*);
 		bool dump_memory(char*);
 		void cycle();
+		void update_keys(SDL_Scancode);
 
 		uint16_t opcode;
 
@@ -37,10 +39,11 @@ private:
 		void LD(uint16_t);		void ADD(uint16_t);		void LDY(uint16_t);		void OR(uint16_t);
 		void AND(uint16_t);		void XOR(uint16_t);		void ADDY(uint16_t);	void SUB(uint16_t);
 		void SHR(uint16_t);		void SUBN(uint16_t);    void SHL(uint16_t);     void SNEY(uint16_t);
-		void ILDADDR(uint16_t); void JMPADDR(uint16_t); void RND(uint16_t);     void DRW(uint16_t);
+		void LDI(uint16_t); 	void RJMP(uint16_t); 	void RND(uint16_t);     void DRW(uint16_t);
 		void SKP(uint16_t);     void SKNP(uint16_t);    void XLDDT(uint16_t);   void XLDK(uint16_t);
 		void DTLDX(uint16_t);   void STLDX(uint16_t);   void IADDX(uint16_t);   void FLDX(uint16_t);
 		void DEC(uint16_t);    	void STX(uint16_t);   	void LDX(uint16_t);
+	
 
 private:
 
@@ -76,7 +79,7 @@ private:
 			{ 0x8000, 0xF00F, &Chip8::LDY }, { 0x8001, 0xF00F, &Chip8::OR  }, { 0x8002, 0xF00F, &Chip8::AND }, { 0x8003, 0xF00F, &Chip8::XOR }, { 0x8004, 0xF00F, &Chip8::ADDY },
 			{ 0x8005, 0xF00F, &Chip8::SUB }, { 0x8006, 0xF00F, &Chip8::SHR }, { 0x8007, 0xF00F, &Chip8::SUBN}, { 0x800E, 0xF00F, &Chip8::SHL }, { 0x9000, 0xF00F, &Chip8::SNEY },
 
-			{ 0xA000, 0xF000, &Chip8::ILDADDR }, { 0xB000, 0xF000, &Chip8::JMPADDR }, { 0xC000, 0xF000, &Chip8::RND }, { 0xD000, 0xF000, &Chip8::DRW }, { 0xE00E, 0xF00F, &Chip8::SKP },
+			{ 0xA000, 0xF000, &Chip8::LDI }, { 0xB000, 0xF000, &Chip8::RJMP }, { 0xC000, 0xF000, &Chip8::RND }, { 0xD000, 0xF000, &Chip8::DRW }, { 0xE00E, 0xF00F, &Chip8::SKP },
 			{ 0xE0A1, 0xF0FF, &Chip8::SKNP }, { 0xF007, 0xF0FF, &Chip8::XLDDT }, { 0xF00A, 0xF0FF, &Chip8::XLDK }, { 0xF015, 0xF0FF, &Chip8::DTLDX }, { 0xF018, 0xF0FF, &Chip8::STLDX },
 			{ 0xF01E, 0xF0FF, &Chip8::IADDX}, { 0xF029, 0xF0FF, &Chip8::FLDX  }, { 0xF033, 0xF0FF, &Chip8::DEC }, { 0xF055, 0xF0FF, &Chip8::STX }, { 0xF065, 0xF0FF, &Chip8::LDX }
 

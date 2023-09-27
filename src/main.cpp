@@ -42,7 +42,7 @@ int main(int argc, char** args) {
     // create chip8 instance
     Chip8 chip8;
 
-    bool did_load = chip8.load_game("res/test_opcode.ch8");
+    bool did_load = chip8.load_game("res/RND_test.ch8");
 
     if (!did_load) {
         app_error("Unable to load rom", "N/A");
@@ -62,11 +62,17 @@ int main(int argc, char** args) {
                 case SDL_QUIT:
                     active = false;
                     break;
+                
+                case SDL_KEYDOWN:
+                    chip8.update_keys(ev.key.keysym.scancode);
             }
         }
-        
+
         // update chip8
         chip8.cycle();
+
+        // refresh keys so when you stop pressing a key it stops being registered
+        memset(chip8.key, 0, 16);
 
         // display screen
         for (int i = 0; i < INTERNAL_SCREEN_WIDTH * INTERNAL_SCREEN_HEIGHT; i++) {

@@ -2,6 +2,7 @@
 #include <vector>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ Chip8::Chip8() {
     memset(gfx, 0, 64 * 32);
     memset(stack, 0, 16 * sizeof(uint16_t));
     memset(V, 0, 16);
+    memset(key, 0, 16);
     memset(memory, 0, 4096);
 
     // load fontset
@@ -27,6 +29,9 @@ Chip8::Chip8() {
     sound_timer = 0;
 
     halt = false;
+
+    // initialise random number generator
+    srand(time(NULL));
 
 }
 
@@ -63,6 +68,69 @@ bool Chip8::dump_memory(char* path) {
     fclose(rom);
 
     return true;
+
+}
+
+void Chip8::update_keys(SDL_Scancode key_pressed) {
+
+    switch (key_pressed) {
+
+        case SDL_SCANCODE_1:
+            key[0x1] = 1;
+            break;
+        case SDL_SCANCODE_2:
+            key[0x2] = 1;
+            break;
+        case SDL_SCANCODE_3:
+            key[0x3] = 1;
+            break;
+        case SDL_SCANCODE_4:
+            key[0xC] = 1;
+            break;
+
+        case SDL_SCANCODE_Q:
+            key[0x4] = 1;
+            break;
+        case SDL_SCANCODE_W:
+            key[0x5] = 1;
+            break;
+        case SDL_SCANCODE_E:
+            key[0x6] = 1;
+            break;
+        case SDL_SCANCODE_R:
+            key[0xD] = 1;
+            break;
+
+        case SDL_SCANCODE_A:
+            key[0x7] = 1;
+            break;
+        case SDL_SCANCODE_S:
+            key[0x8] = 1;
+            break;
+        case SDL_SCANCODE_D:
+            key[0x9] = 1;
+            break;
+        case SDL_SCANCODE_F:
+            key[0xE] = 1;
+            break;
+
+        case SDL_SCANCODE_Z:
+            key[0xA] = 1;
+            break;
+        case SDL_SCANCODE_X:
+            key[0x0] = 1;
+            break;
+        case SDL_SCANCODE_C:
+            key[0xB] = 1;
+            break;
+        case SDL_SCANCODE_V:
+            key[0xF] = 1;
+            break;
+
+        default:
+            break;
+
+    }
 
 }
 
