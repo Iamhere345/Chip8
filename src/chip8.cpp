@@ -68,7 +68,14 @@ bool Chip8::dump_memory(char* path) {
 
 void Chip8::cycle() {
 
+    static bool halt_dump = false;
+
     if (halt) {
+        if (!halt_dump) {
+            this->dump_memory("build/memory.bin");
+            halt_dump = true;
+        }
+
         return;
     }
 

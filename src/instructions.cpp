@@ -14,17 +14,17 @@ void Chip8::CLS(uint16_t opcode) {
 
 // 0x0000: this instruction is depcrecated and should not be called
 void Chip8::SYS(uint16_t opcode) {
-    //printf("0x%X use of SYS is deprecated\n", opcode);
+    printf("0x%X use of SYS is deprecated\n", opcode);
 
     dump_memory("build/memory.bin");
 
-    //pc += 2;
+    halt = true;
 }	
 
 // 0x1NNN: Non-conditional jump
 void Chip8::JMP(uint16_t opcode) {
     //printf("0x%X implemented\n", opcode);
-    //printf("jump to 0x%X (pc: 0x%X)\n", opcode & 0x0FFF, pc);
+    printf("jump to 0x%X (pc: 0x%X)\n", opcode & 0x0FFF, pc);
 
     pc = opcode & 0x0FFF;
 
@@ -82,7 +82,7 @@ void Chip8::SE(uint16_t opcode) {
 
 // 0x4XNN: skip one instruction if Vx != NN
 void Chip8::SNE(uint16_t opcode) {
-    printf("[0x%X] SNE %d != %d\n", opcode, V[(opcode & 0x0F00) >> 8], opcode & 0x00FF);
+    printf("SNE V[%d] %d != %d\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], opcode & 0x00FF);
 
     if (V[(opcode & 0x0F00) >> 8] != (opcode & 0x00FF)) {
         //printf("SE JMP\n");
@@ -95,7 +95,7 @@ void Chip8::SNE(uint16_t opcode) {
 
 // 0x5XY0: skip one instruction if Vx == Vy
 void Chip8::SEY(uint16_t opcode) {
-    printf("[0x%X] SEY %d == %d\n", opcode, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4]);
+    printf("SEY %d == %d\n", V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4]);
 
     if (V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4]) {
         //printf("SE JMP\n");
@@ -108,7 +108,7 @@ void Chip8::SEY(uint16_t opcode) {
 
 // 0x9XY0: skip one instruction if Vx != Vy
 void Chip8::SNEY(uint16_t opcode) {
-    printf("[0x%X] SNEY %d != %d\n", opcode, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4]);
+    printf("SNEY %d != %d\n", V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4]);
 
     if (V[(opcode & 0x0F00) >> 8] != V[(opcode & 0x00F0) >> 4]) {
         //printf("SE JMP\n");
@@ -219,25 +219,37 @@ void Chip8::SUBN(uint16_t opcode) {
 // ? SHL and SHR will have to be modified for an SCHIP or CHIP-48 Implementation
 // 0x8XYE: set Vx to Vy (optional) and shift Vx to the left
 void Chip8::SHL(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
-
-    halt = true;
-    return;
+    printf("SHL\n");
 
     // TODO
-    //if (V[(opcode & 0x0F00) >> 8] & 0x)
+    if ((V[(opcode & 0x00F0) >> 4] & 0x80) != 0) {
+        printf("1\n");
+        V[0xF] = 1;
+    } else {
+        V[0xF] = 0;
+    }
 
-    V[(opcode & 0x0F00) >> 8] = (V[(opcode * 0x00F0) >> 4]) << 1;
+    V[(opcode & 0x0F00) >> 8] = (V[(opcode & 0x00F0) >> 4]) << 1;
 
-
+    pc += 2;
 
 }
 
 // 0x8XYE: set Vx to Vy (optional) and shift Vx to the left
 void Chip8::SHR(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+    printf("SHR\n");
 
-    halt = true;
+    // TODO
+    if ((V[(opcode & 0x00F0) >> 4] & 0x1) != 0) {
+        V[0xF] = 1;
+    } else {
+        V[0xF] = 0;
+    }
+
+    V[(opcode & 0x0F00) >> 8] = (V[(opcode & 0x00F0) >> 4]) >> 1;
+
+    pc += 2;
+
 }
 
 // 0xANNN: set index register I to NNN
@@ -352,21 +364,52 @@ void Chip8::FLDX(uint16_t opcode) {
     halt = true;
 }
 
-void Chip8::BLDX(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+// 0xFX33: takes the number in Vx, and splits each of its three digits (8 bits = 0-255) and puts them in I, I+1, I+2
+void Chip8::DEC(uint16_t opcode) {
 
-    halt = true;
+	uint8_t vx = V[(opcode & 0x0F00) >> 8];	
+
+	memory[I] = vx / 100;
+	memory[I + 1] = (vx / 10) % 10;
+	memory[I + 2] = (vx % 100) % 10;
+
+	pc += 2;
+
 }
 
-void Chip8::DILDX(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+// 0xFX55: store registers V0-Vx into memory, starting at I
+void Chip8::STX(uint16_t opcode) {
 
-    halt = true;
+    uint16_t vx = (opcode & 0x0F00) >> 8;
+
+    printf("store registers V[0]-V[%d] in 0x%X\n", vx, I);
+
+    for (int i = 0; i <= vx; i++) {
+
+        printf("memory[0x%X + %d] = V[%d]\n", I, i, i);
+        memory[I + i] = V[i];
+
+    }
+
+    pc += 2;
+
 }
 
-void Chip8::XLDDI(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+// 0xFX65: load memory starting at I into registers V0-Vx
+void Chip8::LDX(uint16_t opcode) {
+    
+    uint16_t vx = (opcode & 0x0F00) >> 8;
 
-    halt = true;
+    printf("load 0x%X-0x%X into registers V[0]-V[%d]\n", I, I + vx, vx);
+
+    for (int i = 0; i <= vx; i++) {
+
+		printf("V[%d] = memory[0x%X + %d]", i, I, i);
+		V[i] = memory[I + i];
+
+    }
+
+    pc += 2;
+
 }
 

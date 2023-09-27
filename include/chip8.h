@@ -40,7 +40,7 @@ private:
 		void ILDADDR(uint16_t); void JMPADDR(uint16_t); void RND(uint16_t);     void DRW(uint16_t);
 		void SKP(uint16_t);     void SKNP(uint16_t);    void XLDDT(uint16_t);   void XLDK(uint16_t);
 		void DTLDX(uint16_t);   void STLDX(uint16_t);   void IADDX(uint16_t);   void FLDX(uint16_t);
-		void BLDX(uint16_t);    void DILDX(uint16_t);   void XLDDI(uint16_t);
+		void DEC(uint16_t);    	void STX(uint16_t);   	void LDX(uint16_t);
 
 private:
 
@@ -78,7 +78,7 @@ private:
 
 			{ 0xA000, 0xF000, &Chip8::ILDADDR }, { 0xB000, 0xF000, &Chip8::JMPADDR }, { 0xC000, 0xF000, &Chip8::RND }, { 0xD000, 0xF000, &Chip8::DRW }, { 0xE00E, 0xF00F, &Chip8::SKP },
 			{ 0xE0A1, 0xF0FF, &Chip8::SKNP }, { 0xF007, 0xF0FF, &Chip8::XLDDT }, { 0xF00A, 0xF0FF, &Chip8::XLDK }, { 0xF015, 0xF0FF, &Chip8::DTLDX }, { 0xF018, 0xF0FF, &Chip8::STLDX },
-			{ 0xF01E, 0xF0FF, &Chip8::IADDX}, { 0xF029, 0xF0FF, &Chip8::FLDX  }, { 0xF033, 0xF0FF, &Chip8::BLDX }, { 0xF055, 0xF0FF, &Chip8::DILDX }, { 0xF065, 0xF0FF, &Chip8::XLDDI }
+			{ 0xF01E, 0xF0FF, &Chip8::IADDX}, { 0xF029, 0xF0FF, &Chip8::FLDX  }, { 0xF033, 0xF0FF, &Chip8::DEC }, { 0xF055, 0xF0FF, &Chip8::STX }, { 0xF065, 0xF0FF, &Chip8::LDX }
 
 		};
 
