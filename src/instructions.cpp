@@ -380,10 +380,13 @@ void Chip8::NKEY(uint16_t opcode) {
 
 } 
 
-void Chip8::XLDDT(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+// 0xFX07: sets Vx to the value of the delay timer
+void Chip8::TGET(uint16_t opcode) {
+    printf("delay timer is %d\n",  delay_timer);
 
-    halt = true;
+    V[(opcode & 0x0F00) >> 8] = delay_timer;
+
+    pc += 2;
 }
 
 void Chip8::XLDK(uint16_t opcode) {
@@ -392,16 +395,22 @@ void Chip8::XLDK(uint16_t opcode) {
     halt = true;
 }
 
-void Chip8::DTLDX(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+// 0xFX15: sets the delay timer to the Vx
+void Chip8::TSET(uint16_t opcode) {
+    printf("set delay timer to %d", V[(opcode & 0x0F00) >> 8]);
 
-    halt = true;
+    delay_timer = V[(opcode & 0x0F00) >> 8];
+
+    pc += 2;
 }
 
-void Chip8::STLDX(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+// 0xFX18: sets the sound timer to Vx
+void Chip8::STSET(uint16_t opcode) {
+    printf("set sound timer to %d", V[(opcode & 0x0F00) >> 8]);
 
-    halt = true;
+    sound_timer = V[(opcode & 0x0F00) >> 8];
+
+    pc += 2;
 }
 
 // ? although it wasn't in the original implementation, some games rely on VF being set if I overflows

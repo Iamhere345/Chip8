@@ -40,8 +40,8 @@ private:
 		void AND(uint16_t);		void XOR(uint16_t);		void ADDY(uint16_t);	void SUB(uint16_t);
 		void SHR(uint16_t);		void SUBN(uint16_t);    void SHL(uint16_t);     void SNEY(uint16_t);
 		void LDI(uint16_t); 	void RJMP(uint16_t); 	void RND(uint16_t);     void DRW(uint16_t);
-		void KEY(uint16_t);     void NKEY(uint16_t);    void XLDDT(uint16_t);   void XLDK(uint16_t);
-		void DTLDX(uint16_t);   void STLDX(uint16_t);   void ADDI(uint16_t);   	void FLDX(uint16_t);
+		void KEY(uint16_t);     void NKEY(uint16_t);    void TGET(uint16_t);   	void XLDK(uint16_t);
+		void TSET(uint16_t);   	void STSET(uint16_t);   void ADDI(uint16_t);   	void FLDX(uint16_t);
 		void DEC(uint16_t);    	void STX(uint16_t);   	void LDX(uint16_t);
 	
 
@@ -80,7 +80,7 @@ private:
 			{ 0x8005, 0xF00F, &Chip8::SUB }, { 0x8006, 0xF00F, &Chip8::SHR }, { 0x8007, 0xF00F, &Chip8::SUBN}, { 0x800E, 0xF00F, &Chip8::SHL }, { 0x9000, 0xF00F, &Chip8::SNEY },
 
 			{ 0xA000, 0xF000, &Chip8::LDI }, { 0xB000, 0xF000, &Chip8::RJMP }, { 0xC000, 0xF000, &Chip8::RND }, { 0xD000, 0xF000, &Chip8::DRW }, { 0xE09E, 0xF0FF, &Chip8::KEY },
-			{ 0xE0A1, 0xF0FF, &Chip8::NKEY }, { 0xF007, 0xF0FF, &Chip8::XLDDT }, { 0xF00A, 0xF0FF, &Chip8::XLDK }, { 0xF015, 0xF0FF, &Chip8::DTLDX }, { 0xF018, 0xF0FF, &Chip8::STLDX },
+			{ 0xE0A1, 0xF0FF, &Chip8::NKEY }, { 0xF007, 0xF0FF, &Chip8::TGET }, { 0xF00A, 0xF0FF, &Chip8::XLDK }, { 0xF015, 0xF0FF, &Chip8::TSET }, { 0xF018, 0xF0FF, &Chip8::STSET },
 			{ 0xF01E, 0xF0FF, &Chip8::ADDI}, { 0xF029, 0xF0FF, &Chip8::FLDX  }, { 0xF033, 0xF0FF, &Chip8::DEC }, { 0xF055, 0xF0FF, &Chip8::STX }, { 0xF065, 0xF0FF, &Chip8::LDX }
 
 		};

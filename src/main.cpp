@@ -132,7 +132,7 @@ int main(int argc, char** args) {
                 chip8.delay_timer--;
 
             if (chip8.sound_timer > 0) {
-                if (chip8.sound_timer == 1)
+                if (chip8.sound_timer >= 1)
                     printf("BEEP!\n");
                 
                 chip8.sound_timer--;
