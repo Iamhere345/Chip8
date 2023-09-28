@@ -14,6 +14,9 @@ const int INTERNAL_SCREEN_HEIGHT = 32;
 
 const int UPSCALE_FACTOR = SCREEN_WIDTH / INTERNAL_SCREEN_WIDTH;      // 16x internal
 
+// clock speed is set to 700Hz
+const int EMU_CLOCK_SPEED = 700;
+
 int main(int argc, char** args) {
 
     // initialise SDL2
@@ -51,6 +54,13 @@ int main(int argc, char** args) {
     //for (int i = 0; i < 4096; i++)
         //printf("%X", chip8.memory[i]);
 
+    // timers must be updated 60 times per second (60Hz)
+    uint32_t timer_tick = SDL_GetTicks();
+    uint32_t timer_interval = 1000 / 60;
+
+    uint32_t chip8_tick = 0;
+    uint32_t chip8_interval = 1000 / EMU_CLOCK_SPEED;
+
     // emulation loop
     SDL_Event ev;
 
@@ -68,47 +78,68 @@ int main(int argc, char** args) {
             }
         }
 
-        // update chip8
-        chip8.cycle();
+        // run a cycle and render the screen chip8_interval times per second
+        if (SDL_GetTicks() - chip8_tick >= chip8_interval) {
 
-        // refresh keys so when you stop pressing a key it stops being registered
-        memset(chip8.key, 0, 16);
+            chip8_tick = SDL_GetTicks();
 
-        // display screen
-        for (int i = 0; i < INTERNAL_SCREEN_WIDTH * INTERNAL_SCREEN_HEIGHT; i++) {
+            // update chip8
+            chip8.cycle();
 
-            uint8_t pixel = chip8.gfx[i];
+            // refresh keys so when you stop pressing a key it stops being registered
+            memset(chip8.key, 0, 16);
 
-            int px = i % INTERNAL_SCREEN_WIDTH;
-            int py = i / INTERNAL_SCREEN_WIDTH;
+            // display screen
+            for (int i = 0; i < INTERNAL_SCREEN_WIDTH * INTERNAL_SCREEN_HEIGHT; i++) {
 
-            SDL_Rect screen_pixel = { px * UPSCALE_FACTOR, py * UPSCALE_FACTOR, UPSCALE_FACTOR, UPSCALE_FACTOR };
+                uint8_t pixel = chip8.gfx[i];
 
-            switch (pixel) {
-                case 0: {
-                    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
-                    break;
+                int px = i % INTERNAL_SCREEN_WIDTH;
+                int py = i / INTERNAL_SCREEN_WIDTH;
+
+                SDL_Rect screen_pixel = { px * UPSCALE_FACTOR, py * UPSCALE_FACTOR, UPSCALE_FACTOR, UPSCALE_FACTOR };
+
+                switch (pixel) {
+                    case 0: {
+                        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+                        break;
+                    }
+                    case 1: {
+                        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                        break;
+                    }
+                    default: {
+                        // malformed pixels are drawn as red for debugging
+                        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+                        break;
+                    }
+
                 }
-                case 1: {
-                    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                    break;
-                }
-                default: {
-                    // malformed pixels are drawn as red for debugging
-                    SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-                    break;
-                }
+
+                SDL_RenderFillRect(renderer, &screen_pixel);
 
             }
 
-            SDL_RenderFillRect(renderer, &screen_pixel);
-
+            SDL_RenderPresent(renderer);
         }
 
-        SDL_RenderPresent(renderer);
+        // tick timers timer_interval times per second
+        if (SDL_GetTicks() - timer_tick >= timer_interval) {
 
-        // wait for the next clock cycle
-        SDL_Delay(1000 / 700);
+            timer_tick = SDL_GetTicks();
+
+            if (chip8.delay_timer > 0) 
+                chip8.delay_timer--;
+
+            if (chip8.sound_timer > 0) {
+                if (chip8.sound_timer == 1)
+                    printf("BEEP!\n");
+                
+                chip8.sound_timer--;
+            }
+        }
+
+        SDL_Delay(1);
 
     }
     

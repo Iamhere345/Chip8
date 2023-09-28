@@ -174,15 +174,4 @@ void Chip8::cycle() {
         pc += 2;
     }
 
-    // tick timers
-    // TODO timers need to be ticked at 60Hz
-    if (delay_timer > 0) 
-        delay_timer--;
-
-    if (sound_timer > 0) {
-        if (sound_timer == 1) 
-            printf("BEEP!\n");
-        sound_timer--;
-    }
-
 }
