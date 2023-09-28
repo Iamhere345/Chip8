@@ -6,7 +6,7 @@ ifeq ($(OS),Windows_NT)
 	CC = g++
 
 	#INCLUDE_PATHS specifies the additional include paths we'll need
-	INCLUDE_PATHS = -ID:\dev\mingw_libs\x86_64-w64-mingw32\include -ID:\dev\c\Chip8\include
+	INCLUDE_PATHS = -ID:\dev\mingw_libs\x86_64-w64-mingw32\include -Iinclude
 
 	#LIBRARY_PATHS specifies the additional library paths we'll need
 	LIBRARY_PATHS = -LD:\dev\mingw_libs\x86_64-w64-mingw32\lib
