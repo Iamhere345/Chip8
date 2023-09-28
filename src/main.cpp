@@ -42,7 +42,7 @@ int main(int argc, char** args) {
     // create chip8 instance
     Chip8 chip8;
 
-    bool did_load = chip8.load_game("res/RND_test.ch8");
+    bool did_load = chip8.load_game("res/test_opcode.ch8");
 
     if (!did_load) {
         app_error("Unable to load rom", "N/A");

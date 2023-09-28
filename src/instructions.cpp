@@ -145,6 +145,7 @@ void Chip8::LDY(uint16_t opcode) {
 
 }
 
+// ? does not set VF on overflow
 // 0x7XNN: add NN to Vx
 void Chip8::ADD(uint16_t opcode) {
     //printf("0x%X ADD\n", opcode);
@@ -157,6 +158,7 @@ void Chip8::ADD(uint16_t opcode) {
 
 }	
 
+// ? VF undefined
 // 0x8XY1: set Vx to Vx | Vy
 void Chip8::OR(uint16_t opcode) {
 
@@ -166,6 +168,7 @@ void Chip8::OR(uint16_t opcode) {
 
 }
 
+// ? VF undefined
 // 0x8XY2: set Vx to Vx & Vy
 void Chip8::AND(uint16_t opcode) {
 
@@ -177,6 +180,7 @@ void Chip8::AND(uint16_t opcode) {
 
 }
 
+// ? VF undefined
 // 0x8XY3: set Vx to Vx ^ Vy
 void Chip8::XOR(uint16_t opcode) {
 
@@ -187,20 +191,40 @@ void Chip8::XOR(uint16_t opcode) {
     pc += 2;
 }	
 
+// ? sets VF on overfow
 // 0x8XY4: set Vx to Vx + Vy
 void Chip8::ADDY(uint16_t opcode) {
     printf("V[%d] = 0x%X + 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] + V[(opcode & 0x00F0) >> 4]);
 
-    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] + V[(opcode & 0x00F0) >> 4];
+    uint16_t vx = (opcode & 0x0F00) >> 8;
+    uint16_t vy = (opcode & 0x00F0) >> 4;
+
+    if ((uint16_t) V[vx] + (uint16_t) V[vy] > 255) {
+        V[0xF] = 1;
+    } else {
+        V[0xF] = 0;
+    }
+
+    V[vx] = V[vx] + V[vy];
 
     pc += 2;
 }
 
+// ? sets VF to 1 if Vx > Vy, otherwise VF is set to 0 (underflow)
 // 0x8XY5: set Vx to Vx - Vy
 void Chip8::SUB(uint16_t opcode) {
     printf("V[%d] = 0x%X - 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] - V[(opcode & 0x00F0) >> 4]);
 
-    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] - V[(opcode & 0x00F0) >> 4];
+    uint16_t vx = (opcode & 0x0F00) >> 8;
+    uint16_t vy = (opcode & 0x00F0) >> 4;
+
+    if (V[vx] > V[vy]) {
+        V[0xF] = 1;
+    } else {
+        V[0xF] = 0;
+    }
+
+    V[vx] = V[vx] - V[vy];
 
     pc += 2;
 }
@@ -209,7 +233,16 @@ void Chip8::SUB(uint16_t opcode) {
 void Chip8::SUBN(uint16_t opcode) {
     printf("V[%d] = 0x%X - 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] - V[(opcode & 0x00F0) >> 4]);
 
-    V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x00F0) >> 4] - V[(opcode & 0x0F00) >> 8];
+    uint16_t vx = (opcode & 0x0F00) >> 8;
+    uint16_t vy = (opcode & 0x00F0) >> 4;
+
+    if (V[vy] > V[vx]) {
+        V[0xF] = 1;
+    } else {
+        V[0xF] = 0;
+    }
+
+    V[vx] = V[vy] - V[vx];
 
     pc += 2;
 } 
@@ -219,9 +252,7 @@ void Chip8::SUBN(uint16_t opcode) {
 void Chip8::SHL(uint16_t opcode) {
     printf("SHL\n");
 
-    // TODO
     if ((V[(opcode & 0x00F0) >> 4] & 0x80) != 0) {
-        printf("1\n");
         V[0xF] = 1;
     } else {
         V[0xF] = 0;
@@ -237,7 +268,6 @@ void Chip8::SHL(uint16_t opcode) {
 void Chip8::SHR(uint16_t opcode) {
     printf("SHR\n");
 
-    // TODO
     if ((V[(opcode & 0x00F0) >> 4] & 0x1) != 0) {
         V[0xF] = 1;
     } else {
@@ -252,7 +282,6 @@ void Chip8::SHR(uint16_t opcode) {
 
 // 0xANNN: set index register I to NNN
 void Chip8::LDI(uint16_t opcode) {
-    //printf("0x%X implemented\n", opcode);
 
     I = opcode & 0x0FFF;
 
@@ -323,16 +352,32 @@ void Chip8::DRW(uint16_t opcode) {
     
 }
 
-void Chip8::SKP(uint16_t opcode) {
-    printf("0x%X unimplemented AA\n", opcode);
+// 0xEX9E: skips an instruction if the key held in Vx is pressed
+void Chip8::KEY(uint16_t opcode) {
+    uint8_t key_pressed = key[V[(opcode & 0x0F00) >> 8]];
 
-    halt = true;
+    if (key_pressed) {
+        printf("key 0x%X pressed. SKIP.\n", V[(opcode & 0x0F00) >> 8]);
+        pc += 4;
+    } else {
+        printf("key 0x%X not pressed\n", V[(opcode & 0x0F00) >> 8]);
+        pc += 2;
+    }
+
 }
 
-void Chip8::SKNP(uint16_t opcode) {
-    printf("0x%X unimplemented AA\n", opcode);
+// 0xEXA1: skips an instruction if the key held in Vx is not pressed
+void Chip8::NKEY(uint16_t opcode) {
+    uint8_t key_pressed = key[V[(opcode & 0x0F00) >> 8]];
 
-    halt = true;
+    if (!key_pressed) {
+        printf("key 0x%X not pressed. SKIP.\n", V[(opcode & 0x0F00) >> 8]);
+        pc += 4;
+    } else {
+        printf("key 0x%X pressed\n", V[(opcode & 0x0F00) >> 8]);
+        pc += 2;
+    }
+
 } 
 
 void Chip8::XLDDT(uint16_t opcode) {
@@ -359,10 +404,21 @@ void Chip8::STLDX(uint16_t opcode) {
     halt = true;
 }
 
-void Chip8::IADDX(uint16_t opcode) {
-    printf("0x%X unimplemented\n", opcode);
+// ? although it wasn't in the original implementation, some games rely on VF being set if I overflows
+// 0xFX1E: add Vx to I
+void Chip8::ADDI(uint16_t opcode) {
+    printf("I (0x%X) += 0x%X", I, (opcode & 0x0F00) >> 8);
 
-    halt = true;
+    I += (opcode & 0x0F00) >> 8;
+
+    if (I >= 0x1000) {
+        V[0xF] = 1;
+    } else {
+        V[0xF] = 0;
+    }
+
+    pc += 2;
+
 }
 
 void Chip8::FLDX(uint16_t opcode) {
