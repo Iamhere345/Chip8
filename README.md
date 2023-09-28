@@ -4,7 +4,10 @@ This is a chip8 emulator that i wrote in C++. it's currently a WIP, but most of 
 
 # Running Roms
 
-Currently there is no way to change which rom you want to load (without editing `main.cpp`), but in the future i will allow loading roms from the command line
+Specify which rom you would like to load as a command line argument
+`./chip8 [rom]`
+
+If you don't specify a rom, it will default to `DEFAULT_ROM`
 
 # Building
 

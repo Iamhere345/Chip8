@@ -6,6 +6,8 @@
     return 1; \
 }
 
+#define DEFAULT_ROM "res/IBM.ch8"
+
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 512;
 
@@ -17,7 +19,7 @@ const int UPSCALE_FACTOR = SCREEN_WIDTH / INTERNAL_SCREEN_WIDTH;      // 16x int
 // clock speed is set to 700Hz
 const int EMU_CLOCK_SPEED = 700;
 
-int main(int argc, char** args) {
+int main(int argc, char** argv) {
 
     // initialise SDL2
     SDL_Window* window = NULL;
@@ -45,9 +47,17 @@ int main(int argc, char** args) {
     // create chip8 instance
     Chip8 chip8;
 
-    bool did_load = chip8.load_game("res/test_opcode.ch8");
+    bool rom_loaded = false;
 
-    if (!did_load) {
+    if (argc <= 1) {
+        printf("#### No rom supplied as arg, defaulting to %s ####\n", DEFAULT_ROM);
+        rom_loaded = chip8.load_game(DEFAULT_ROM);
+    } else {
+        printf("#### loading rom %s ####\n", argv[1]);
+        rom_loaded = chip8.load_game(argv[1]);
+    }
+
+    if (!rom_loaded) {
         app_error("Unable to load rom", "N/A");
     }
 
