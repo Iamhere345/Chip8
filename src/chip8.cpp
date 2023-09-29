@@ -71,60 +71,60 @@ bool Chip8::dump_memory(char* path) {
 
 }
 
-void Chip8::update_keys(SDL_Scancode key_pressed) {
+void Chip8::update_keys(SDL_Scancode key_pressed, uint8_t state) {
 
     switch (key_pressed) {
 
         case SDL_SCANCODE_1:
-            key[0x1] = 1;
+            key[0x1] = state;
             break;
         case SDL_SCANCODE_2:
-            key[0x2] = 1;
+            key[0x2] = state;
             break;
         case SDL_SCANCODE_3:
-            key[0x3] = 1;
+            key[0x3] = state;
             break;
         case SDL_SCANCODE_4:
-            key[0xC] = 1;
+            key[0xC] = state;
             break;
 
         case SDL_SCANCODE_Q:
-            key[0x4] = 1;
+            key[0x4] = state;
             break;
         case SDL_SCANCODE_W:
-            key[0x5] = 1;
+            key[0x5] = state;
             break;
         case SDL_SCANCODE_E:
-            key[0x6] = 1;
+            key[0x6] = state;
             break;
         case SDL_SCANCODE_R:
-            key[0xD] = 1;
+            key[0xD] = state;
             break;
 
         case SDL_SCANCODE_A:
-            key[0x7] = 1;
+            key[0x7] = state;
             break;
         case SDL_SCANCODE_S:
-            key[0x8] = 1;
+            key[0x8] = state;
             break;
         case SDL_SCANCODE_D:
-            key[0x9] = 1;
+            key[0x9] = state;
             break;
         case SDL_SCANCODE_F:
-            key[0xE] = 1;
+            key[0xE] = state;
             break;
 
         case SDL_SCANCODE_Z:
-            key[0xA] = 1;
+            key[0xA] = state;
             break;
         case SDL_SCANCODE_X:
-            key[0x0] = 1;
+            key[0x0] = state;
             break;
         case SDL_SCANCODE_C:
-            key[0xB] = 1;
+            key[0xB] = state;
             break;
         case SDL_SCANCODE_V:
-            key[0xF] = 1;
+            key[0xF] = state;
             break;
 
         default:
@@ -158,7 +158,7 @@ void Chip8::cycle() {
 
         if ((opcode & info.mask) == info.opcode) {
 
-            printf("[0x%X] ", opcode);
+            //printf("[0x%X] ", opcode);
 
             //printf("0x%X & 0x%X == 0x%X\n", opcode, info.mask, info.opcode);
 
@@ -167,6 +167,13 @@ void Chip8::cycle() {
             opcode_executed = true;
             break;
         }
+    }
+
+    // set VF if the instruction changed flag
+    if (flag_set) {
+        //printf("[0x%X] set VF to %d\n", opcode, flag);
+        V[0xF] = flag;
+        flag_set = false;
     }
 
     if (!opcode_executed) {

@@ -61,9 +61,6 @@ int main(int argc, char** argv) {
         app_error("Unable to load rom", "N/A");
     }
 
-    //for (int i = 0; i < 4096; i++)
-        //printf("%X", chip8.memory[i]);
-
     // timers must be updated 60 times per second (60Hz)
     uint32_t timer_tick = SDL_GetTicks();
     uint32_t timer_interval = 1000 / 60;
@@ -84,7 +81,11 @@ int main(int argc, char** argv) {
                     break;
                 
                 case SDL_KEYDOWN:
-                    chip8.update_keys(ev.key.keysym.scancode);
+                    chip8.update_keys(ev.key.keysym.scancode, 1);
+                    break;
+                case SDL_KEYUP:
+                    chip8.update_keys(ev.key.keysym.scancode, 0);
+                    break;
             }
         }
 
@@ -95,9 +96,6 @@ int main(int argc, char** argv) {
 
             // update chip8
             chip8.cycle();
-
-            // refresh keys so when you stop pressing a key it stops being registered
-            memset(chip8.key, 0, 16);
 
             // display screen
             for (int i = 0; i < INTERNAL_SCREEN_WIDTH * INTERNAL_SCREEN_HEIGHT; i++) {
