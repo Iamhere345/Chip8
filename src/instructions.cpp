@@ -16,7 +16,7 @@ void Chip8::CLS(uint16_t opcode) {
 
     pc += 2;
 
-    CHIP8_LOG("clear screen\n", opcode);
+    CHIP8_LOG("clear screen\n");
 }	
 
 // 0x0000: this instruction is depcrecated and should not be called
@@ -38,7 +38,7 @@ void Chip8::JMP(uint16_t opcode) {
 
 // 0x2NNN: add pc to the stack and jump to NNN
 void Chip8::CALL(uint16_t opcode) {
-    CHIP8_LOG("CALL 0x%X from 0x%X\n", opcode, opcode & 0x0FFF, pc);
+    CHIP8_LOG("CALL 0x%X from 0x%X\n", opcode & 0x0FFF, pc);
 
     stack[sp++] = pc;
 
@@ -74,7 +74,7 @@ void Chip8::RET(uint16_t opcode) {
 
 // 0x3XNN: skip one instruction if Vx == NN
 void Chip8::SE(uint16_t opcode) {
-    CHIP8_LOG("SE %d == %d\n", opcode, V[(opcode & 0x0F00) >> 8], opcode & 0x00FF);
+    CHIP8_LOG("SE %d == %d\n", V[(opcode & 0x0F00) >> 8], opcode & 0x00FF);
 
     if (V[(opcode & 0x0F00) >> 8] == (opcode & 0x00FF)) {
         //CHIP8_LOG("SE JMP\n");
@@ -125,20 +125,14 @@ void Chip8::SNEY(uint16_t opcode) {
     }
 }
 
-// 0x6XKK: set Vx to u8 kk 
+// 0x6XNN: set Vx to NN 
 void Chip8::LD(uint16_t opcode) {
-    //CHIP8_LOG("0x%X implemented\n", opcode);
-
-    uint16_t index = (opcode & 0x0F00) >> 8;
-    V[index] = (opcode & 0x00FF);
-
-    uint8_t vx = (opcode & 0x00FF);
-
-    //CHIP8_LOG("0x%X", vx);
+    
+    V[(opcode & 0x0F00) >> 8] = opcode & 0x00FF;
 
     pc += 2;
 
-    CHIP8_LOG("set V[%d] to 0x%X (0x%X)\n", index, vx, opcode);
+    CHIP8_LOG("set V[%d] to 0x%X (0x%X)\n", (opcode & 0x0F00) >> 8, opcode & 0x00FF, opcode);
 }	
 
 // 0x8XY0: set Vx to Vy
@@ -329,6 +323,7 @@ void Chip8::RND(uint16_t opcode) {
 
 }
 
+// ! out of bounds memory access @0x407 (opcode: 0x1660)
 // DXYN: draws a sprite to the screen at positon (Vx, Vy) that is N pixels tall
 void Chip8::DRW(uint16_t opcode) {
     CHIP8_LOG("0x%X DRAW\n", opcode);
@@ -353,6 +348,11 @@ void Chip8::DRW(uint16_t opcode) {
             uint8_t xbit = pixel & (0x80 >> xline);
             uint8_t screen_pixel = x + xline + ((y + yline) * 64);
 
+            if ((x + xline + ((y + yline) * 64)) >= 2048) {
+                CHIP8_LOG("**** GFX OUT OF BOUNDS ****\n");
+                continue;
+            }
+
             if (xbit != 0) {
 
                 // if the pixel will be set to 0 set VF
@@ -360,7 +360,7 @@ void Chip8::DRW(uint16_t opcode) {
                     flag = 1;
                 
                 gfx[x + xline + ((y + yline) * 64)] ^= 1;
-            } 
+            }
 
         }
 
@@ -433,7 +433,7 @@ void Chip8::WKEY(uint16_t opcode) {
 
         }
     }
-
+    pc += 2;
 }
 
 // 0xFX15: sets the delay timer to the Vx

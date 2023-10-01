@@ -6,7 +6,7 @@
     return 1; \
 }
 
-#define DEFAULT_ROM "res/IBM.ch8"
+#define DEFAULT_ROM "res/5-quirks.ch8"
 
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 512;

@@ -30,6 +30,9 @@ Chip8::Chip8() {
 
     halt = false;
 
+    flag = 0;
+    flag_set = false;
+
     // initialise random number generator
     srand(time(NULL));
 
@@ -158,7 +161,7 @@ void Chip8::cycle() {
 
         if ((opcode & info.mask) == info.opcode) {
 
-            //printf("[0x%X] ", opcode);
+            printf("[0x%X][0x%X] ", pc, opcode);
 
             //printf("0x%X & 0x%X == 0x%X\n", opcode, info.mask, info.opcode);
 
@@ -178,7 +181,16 @@ void Chip8::cycle() {
 
     if (!opcode_executed) {
         printf("Undefined opcode 0x%X\n", opcode);
+
         pc += 2;
+
+        /*
+        halt = true;
+
+        for (int i = 0; i < 35; i++) {
+            printf("{ opcode: 0x%X mask: 0x%X }", LOOKUP_TABLE[i].opcode, LOOKUP_TABLE[i].mask);
+        }
+        */
     }
 
 }
