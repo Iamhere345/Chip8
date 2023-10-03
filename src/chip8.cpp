@@ -29,6 +29,7 @@ Chip8::Chip8() {
     sound_timer = 0;
 
     halt = false;
+    step = false;
 
     flag = 0;
     flag_set = false;
@@ -129,6 +130,18 @@ void Chip8::update_keys(SDL_Scancode key_pressed, uint8_t state) {
         case SDL_SCANCODE_V:
             key[0xF] = state;
             break;
+        
+        case SDL_SCANCODE_SPACE:
+            if (state) {
+                halt = !halt;
+            }
+            break;
+        
+        case SDL_SCANCODE_RETURN:
+            if (state) {
+                step = true;
+            }
+            break;
 
         default:
             break;
@@ -141,7 +154,7 @@ void Chip8::cycle() {
 
     static bool halt_dump = false;
 
-    if (halt) {
+    if (halt && !step) {
         if (!halt_dump) {
             this->dump_memory("build/memory.bin");
             halt_dump = true;
@@ -149,6 +162,9 @@ void Chip8::cycle() {
 
         return;
     }
+
+    if (step)
+        step = false;
 
     // fetch instruction
     opcode = memory[pc] << 8 | memory[pc + 1];

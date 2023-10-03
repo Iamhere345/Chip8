@@ -35,6 +35,7 @@ class Chip8 {
 		bool flag_set;
 
 		bool halt;
+		bool step;
 
 private:
 		void CLS(uint16_t);		void RET(uint16_t);		void SYS(uint16_t); 	void JMP(uint16_t);
