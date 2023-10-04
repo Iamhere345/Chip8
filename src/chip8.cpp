@@ -52,6 +52,8 @@ bool Chip8::load_game(char* path) {
         memory[i] = c;
     }
 
+    fclose(rom);
+
     printf("**** %d bytes loaded ****\n", i - 0x200);
 
     return true;
@@ -60,16 +62,16 @@ bool Chip8::load_game(char* path) {
 
 bool Chip8::dump_memory(char* path) {
 
-    FILE* rom = fopen(path, "w");
+    FILE* mem = fopen(path, "w");
 
-    if (rom == NULL) {
+    if (mem == NULL) {
         return false;
     }
 
     for (int i = 0; i < 4096; i++)
-        fputc(memory[i], rom);
+        fputc(memory[i], mem);
 
-    fclose(rom);
+    fclose(mem);
 
     return true;
 

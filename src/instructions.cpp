@@ -91,10 +91,10 @@ void Chip8::SNE(uint16_t opcode) {
     CHIP8_LOG("SNE V[%d] %d != %d\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], opcode & 0x00FF);
 
     if (V[(opcode & 0x0F00) >> 8] != (opcode & 0x00FF)) {
-        //CHIP8_LOG("SE JMP\n");
+        CHIP8_LOG("SE JMP\n");
         pc += 4;
     } else {
-        //CHIP8_LOG("SE NO JMP\n");
+        CHIP8_LOG("SE NO JMP\n");
         pc += 2;
     }
 }
@@ -163,6 +163,9 @@ void Chip8::ADD(uint16_t opcode) {
 // 0x8XY1: set Vx to Vx | Vy
 void Chip8::OR(uint16_t opcode) {
 
+    flag_set = true;
+    flag = 0;
+
     V[(opcode & 0x0F00) >> 8] = V[(opcode & 0x0F00) >> 8] | V[(opcode & 0x00F0) >> 4];
 
     pc += 2;
@@ -172,6 +175,9 @@ void Chip8::OR(uint16_t opcode) {
 // ? VF undefined
 // 0x8XY2: set Vx to Vx & Vy
 void Chip8::AND(uint16_t opcode) {
+
+    flag_set = true;
+    flag = 0;
 
     CHIP8_LOG("V[%d] = 0x%X & 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] & V[(opcode & 0x00F0) >> 4]);
 
@@ -184,6 +190,9 @@ void Chip8::AND(uint16_t opcode) {
 // ? VF undefined
 // 0x8XY3: set Vx to Vx ^ Vy
 void Chip8::XOR(uint16_t opcode) {
+
+    flag_set = true;
+    flag = 0;
 
     CHIP8_LOG("V[%d] = 0x%X ^ 0x%X == 0x%X\n", (opcode & 0x0F00) >> 8, V[(opcode & 0x0F00) >> 8], V[(opcode & 0x00F0) >> 4], V[(opcode & 0x0F00) >> 8] ^ V[(opcode & 0x00F0) >> 4]);
 
@@ -510,6 +519,7 @@ void Chip8::STX(uint16_t opcode) {
 
     }
 
+    I += vx - 1;
     pc += 2;
 
 }
@@ -523,11 +533,12 @@ void Chip8::LDX(uint16_t opcode) {
 
     for (int i = 0; i <= vx; i++) {
 
-		CHIP8_LOG("V[%d] = memory[0x%X + %d]", i, I, i);
+		CHIP8_LOG("V[%d] = memory[0x%X + %d]\n", i, I, i);
 		V[i] = memory[I + i];
 
     }
 
+    I += vx - 1;
     pc += 2;
 
 }
