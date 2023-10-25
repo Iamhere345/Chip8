@@ -84,7 +84,7 @@ void Chip8::SE(uint16_t opcode) {
         pc += 2;
     }
 
-}	
+}
 
 // 0x4XNN: skip one instruction if Vx != NN
 void Chip8::SNE(uint16_t opcode) {
@@ -355,9 +355,9 @@ void Chip8::DRW(uint16_t opcode) {
 
             // 0x80 = 0b10000000
             uint8_t xbit = pixel & (0x80 >> xline);
-            uint8_t screen_pixel = x + xline + ((y + yline) * 64);
+            uint16_t screen_pixel = x + xline + ((y + yline) * 64);
 
-            if ((x + xline + ((y + yline) * 64)) >= 2048) {
+            if (screen_pixel >= 2048) {
                 CHIP8_LOG("**** GFX OUT OF BOUNDS ****\n");
                 continue;
             }

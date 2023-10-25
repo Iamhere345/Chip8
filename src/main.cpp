@@ -8,6 +8,9 @@
 
 #define DEFAULT_ROM "res/5-quirks.ch8"
 
+#define FOREGROUND_COLOUR 0x00, 0xFF, 0x00
+#define BACKGROUND_COLOUR 0x00, 0x00, 0x00
+
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 512;
 
@@ -109,11 +112,11 @@ int main(int argc, char** argv) {
 
                 switch (pixel) {
                     case 0: {
-                        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+                        SDL_SetRenderDrawColor(renderer, BACKGROUND_COLOUR, 0xFF);
                         break;
                     }
                     case 1: {
-                        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                        SDL_SetRenderDrawColor(renderer, FOREGROUND_COLOUR, 0xFF);
                         break;
                     }
                     default: {
