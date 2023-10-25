@@ -1,6 +1,6 @@
 # Chip8 Emulator
 
-This is a chip8 emulator that i wrote in C++. it's currently a WIP, but most of the instructions are implemented and it can run a few test roms (see `res/`)
+This is a chip8 emulator that i wrote in C++. it's currently a WIP (I still need to work out a few quirks and bugs), but all of the instructions are implemented and it can run a few test roms (see `res/`)
 
 # Running Roms
 
