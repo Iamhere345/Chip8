@@ -6,7 +6,7 @@
     return 1; \
 }
 
-#define DEFAULT_ROM "res/5-quirks.ch8"
+#define DEFAULT_ROM "roms/5-quirks.ch8"
 
 #define FOREGROUND_COLOUR 0x00, 0xFF, 0x00
 #define BACKGROUND_COLOUR 0x00, 0x00, 0x00
@@ -143,8 +143,11 @@ int main(int argc, char** argv) {
                 chip8.delay_timer--;
 
             if (chip8.sound_timer > 0) {
+                // TODO implement buzzer sound with SDL
+                #ifdef CHIP8_DEBUG
                 if (chip8.sound_timer >= 1)
                     printf("BEEP!\n");
+                #endif
                 
                 chip8.sound_timer--;
             }

@@ -1,3 +1,5 @@
+EXTRA_CFLAGS=
+
 ifeq ($(OS),Windows_NT)
 	#OBJS specifies which files to compile as part of the project
 	OBJS = src\main.cpp src\chip8.cpp src\instructions.cpp
@@ -35,6 +37,10 @@ else
 	OBJ_NAME = build/chip8
 endif
 
+ifeq ($(DEBUG),1)
+	EXTRA_CFLAGS="-D CHIP8_DEBUG"
+endif
+
 #This is the target that compiles our executable
 all : $(OBJS)
-	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(EXTRA_CFLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)

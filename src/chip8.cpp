@@ -179,7 +179,9 @@ void Chip8::cycle() {
 
         if ((opcode & info.mask) == info.opcode) {
 
-            //printf("[0x%X][0x%X] ", pc, opcode);
+            #ifdef CHIP8_DEBUG
+            printf("[0x%X][0x%X] ", pc, opcode);
+            #endif
 
             //printf("0x%X & 0x%X == 0x%X\n", opcode, info.mask, info.opcode);
 

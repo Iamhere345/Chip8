@@ -2,8 +2,6 @@
 #include <cstring>
 #include <stdlib.h>
 
-#define CHIP8_DEBUG
-
 #ifdef CHIP8_DEBUG
 #define CHIP8_LOG(...) printf(__VA_ARGS__)
 #else
