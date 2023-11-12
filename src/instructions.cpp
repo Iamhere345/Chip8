@@ -360,6 +360,11 @@ void Chip8::DRW(uint16_t opcode) {
                 continue;
             }
 
+            if (screen_pixel / 64 != y + yline) {
+                CHIP8_LOG("**** SPRITE CLIPPING ****\n");
+                continue;
+            }
+
             if (xbit != 0) {
 
                 // if the pixel will be set to 0 set VF

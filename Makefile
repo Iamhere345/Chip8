@@ -38,7 +38,7 @@ else
 endif
 
 ifeq ($(DEBUG),1)
-	EXTRA_CFLAGS="-D CHIP8_DEBUG"
+	EXTRA_CFLAGS=-D CHIP8_DEBUG
 endif
 
 #This is the target that compiles our executable
