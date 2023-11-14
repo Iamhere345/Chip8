@@ -37,6 +37,12 @@ class Chip8 {
 		bool halt;
 		bool step;
 
+		#ifdef CHIP8_DEBUG
+		uint16_t break_addr[16];
+		uint16_t break_op[16];
+		bool break_active;
+		#endif
+
 private:
 		void CLS(uint16_t);		void RET(uint16_t);		void SYS(uint16_t); 	void JMP(uint16_t);
 		void CALL(uint16_t);	void SE(uint16_t);		void SNE(uint16_t);		void SEY(uint16_t);

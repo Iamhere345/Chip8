@@ -7,7 +7,7 @@
 using namespace std;
 
 Chip8::Chip8() {
-    
+
     pc      = 0x200;
     opcode  = 0;
     I       = 0;
@@ -168,8 +168,30 @@ void Chip8::cycle() {
     if (step)
         step = false;
 
+    #ifdef CHIP8_DEBUG
+    for (int i = 0; i < 32; i++) {
+        if (break_addr[i] == pc && !break_active) {
+            printf("!!!! breakpoint hit at 0x%X !!!!\n", break_addr[i]);
+            halt = true;
+            break_active = !break_active;
+            return;
+        }
+    }
+    #endif
+
     // fetch instruction
     opcode = memory[pc] << 8 | memory[pc + 1];
+
+    #ifdef CHIP8_DEBUG
+    for (int i = 0; i < 32; i++) {
+        if (break_op[i] == opcode && !break_active) {
+            printf("!!!! op breakpoint hit on 0x%X @ 0x%X !!!!\n", break_op[i], pc);
+            halt = true;
+            break_active = !break_active;
+            return;
+        }
+    }
+    #endif
 
     // decode and execute instruction
     bool opcode_executed = false;
@@ -204,13 +226,8 @@ void Chip8::cycle() {
 
         pc += 2;
 
-        /*
         halt = true;
 
-        for (int i = 0; i < 35; i++) {
-            printf("{ opcode: 0x%X mask: 0x%X }", LOOKUP_TABLE[i].opcode, LOOKUP_TABLE[i].mask);
-        }
-        */
     }
 
 }

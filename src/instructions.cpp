@@ -15,7 +15,7 @@ void Chip8::CLS(uint16_t opcode) {
     pc += 2;
 
     CHIP8_LOG("clear screen\n");
-}	
+}
 
 // 0x0000: this instruction is depcrecated and should not be called
 void Chip8::SYS(uint16_t opcode) {
@@ -445,7 +445,6 @@ void Chip8::WKEY(uint16_t opcode) {
 
         }
     }
-    pc += 2;
 }
 
 // 0xFX15: sets the delay timer to the Vx
